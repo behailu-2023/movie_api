@@ -1,5 +1,11 @@
 const express = require('express');
+const morgan = require('morgan');
+    fs = require('fs');
+    morgan = require('morgan');
+    path = require('path');
 const app = express();
+
+const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
 
 let movies = [
     {
@@ -44,6 +50,9 @@ let movies = [
     }
 ];
 
+app.use(morgan('combined', {stream: accessLogStream}));
+app.use(express.static('public'));
+
 //GET request
 app.get('/', (req, res) => {
     res.send('Welcome to my movie club!');
@@ -53,6 +62,10 @@ app.get('/documentation', (req, res) => {
 });
 app.get('/movies', (req, res) =>{
     res.json(movies);
+});
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('something Wrong!');
 });
 //listen for request
 app.listen(8080, () =>{
