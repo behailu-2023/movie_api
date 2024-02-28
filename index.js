@@ -1,7 +1,6 @@
 const express = require('express');
-const morgan = require('morgan');
-    fs = require('fs');
-    morgan = require('morgan');
+const morgan = require('morgan'),
+    fs = require('fs'),
     path = require('path');
 const app = express();
 
