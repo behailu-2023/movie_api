@@ -1,3 +1,11 @@
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+
+mongoose.connect('mongodb://localhost:27017/mymoviesDB', {useNewUrlParser: true, useUnifiedTopology: true});
+
 const express = require('express');
 const morgan = require('morgan'),
     bodyParser = require('body-parser'),
@@ -5,6 +13,9 @@ const morgan = require('morgan'),
     fs = require('fs'),
     path = require('path');
 const app = express();
+
+app.use(express.json());
+app.use(express.urlencoded({extended: true}));
 
 const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {flags: 'a'});
 
@@ -23,12 +34,13 @@ let users = [
         favoriteMovies: ['Focus']
     },
 
+
 ]
 
 let movies = [
     {
         'Title': 'Pay it Forward',
-        'Description': 'Trevor McKinney begins the seventh grade in Las Vegas. His social studies teacher, Eugene Simonet, assigns the class to put into action a plan that will change the world for the better. Trevor calls his plan "pay it forward", which means the recipient of a favor does a favor for three others rather than paying it back.',
+        'Description': 'Trevor McKinney begins the seventh grade in Las Vegas. His social studies teacher, Eugene Simonet, assigns the class to put into action a plan that will change the world for the better. Trevor calls his plan pay it forward, which means the recipient of a favor does a favor for three others rather than paying it back.',
         'Genre': {  
             'Name': 'romantic drama',
             'Description': 'Romantic dramas are a more complex subgenre. Romantic dramas dive deeper into the conflicting emotions of romance and relationships, dealing with other issues like tribulations, death, separation, infidelity, and the introduction of love triangles.'
@@ -128,7 +140,7 @@ let movies = [
         },
         'Director': {
             'Name': 'Louis Leterrier',
-            'Bio': 'Louis Leterrier (French: [lwi lətɛʁje]; born 17 June 1973) is a French film and television director. Best known for his work in action films, he directed the first two Transporter films (2002 until 2015), The Incredible Hulk (2008), Clash of the Titans (2010), Now You See Me (2013), and the tenth Fast & Furious installment, Fast X (2023). He also directed the streaming television series The Dark Crystal: Age of Resistance (2019).',
+            'Bio': 'Louis Leterrier; born 17 June 1973) is a French film and television director. Best known for his work in action films, he directed the first two Transporter films (2002 until 2015), The Incredible Hulk (2008), Clash of the Titans (2010), Now You See Me (2013), and the tenth Fast & Furious installment, Fast X (2023). He also directed the streaming television series The Dark Crystal: Age of Resistance (2019).',
             'Birth': 1973
         }, 
     },         
@@ -266,6 +278,18 @@ app.get('/movies/director/:directorName', (req, res) =>{
 app.get('/users', (req, res) =>{
     res.status(200).json(users);
 });
+
+// Get all users
+app.get('/users', async (req, res) => {
+    await Users.find()
+      .then((users) => {
+        res.status(201).json(users);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  });
 /**
  * Retrieves data for a specific user by username.
  * @function
@@ -287,6 +311,19 @@ app.get('/users/:name', (req, res) =>{
     }
     
 });
+
+// Get a user by username
+app.get('/users/:Username', async (req, res) => {
+    await Users.findOne({ Username: req.params.Username })
+      .then((user) => {
+        res.json(user);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  });
+
 //CREAT
 /**
  * Creates a new user.
@@ -309,6 +346,34 @@ app.post('/users', (req, res) => {
         res.status(400).send('users need names')
     }
 });
+
+app.post('/users', async (req, res) => {
+    await Users.findOne({ Username: req.body.Username })
+      .then((user) => {
+        if (user) {
+          return res.status(400).send(req.body.Username + 'already exists');
+        } else {
+          Users
+            .create({
+              Username: req.body.Username,
+              Password: req.body.Password,
+              Email: req.body.Email,
+              Birthday: req.body.Birthday
+            })
+            .then((user) =>{res.status(201).json(user) })
+          .catch((error) => {
+            console.error(error);
+            res.status(500).send('Error: ' + error);
+          })
+        }
+      })
+      .catch((error) => {
+        console.error(error);
+        res.status(500).send('Error: ' + error);
+      });
+  });
+
+
 //UPDATE
 /**
  * Updates information for a specific user by name.
@@ -335,6 +400,28 @@ app.put('/users/:name', (req, res) => {
         res.status(400).send('no such user')
     }
 });
+
+// Update a user's info, by username
+app.put('/users/:Username', async (req, res) => {
+    await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+      {
+        Username: req.body.Username,
+        Password: req.body.Password,
+        Email: req.body.Email,
+        Birthday: req.body.Birthday
+      }
+    },
+    { new: true }) 
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error:  ' + err);
+    })
+  
+  });
+  
 //CREAT
 /**
  * Adds a movie to the list of watched movies for a specific user by name.
@@ -361,6 +448,22 @@ app.post('/users/:name/:movieTitle', (req, res) => {
         res.status(400).send('no such user')
     }
 });
+
+// Add a movie to a user's list of favorites
+app.post('/users/:Username/movies/:MovieID', async (req, res) => {
+    await Users.findOneAndUpdate({ Username: req.params.Username }, {
+       $push: { FavoriteMovies: req.params.MovieID }
+     },
+     { new: true }) // This line makes sure that the updated document is returned
+    .then((updatedUser) => {
+      res.json(updatedUser);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error:  ' + err);
+    });
+  });
+
 //DELETE
 /**
  * Removes a movie from the list of watched movies for a specific user by name.
@@ -414,6 +517,22 @@ app.delete('/users/:name', (req, res) => {
         res.status(400).send('no such user')
     }
 });
+
+// Delete a user by username
+app.delete('/users/:Username', async (req, res) => {
+    await Users.findOneAndRemove({ Username: req.params.Username })
+      .then((user) => {
+        if (!user) {
+          res.status(400).send(req.params.Username + ' was not found');
+        } else {
+          res.status(200).send(req.params.Username + ' was deleted.');
+        }
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+      });
+  });
 //listen for request
 app.listen(8080, () =>{
     console.log('Your app is listening on port 8080.');
