@@ -50,15 +50,16 @@ app.get('/documentation', (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object containing data on all the movies.
 */
-app.get('/movies', (req, res) =>{
-    res.json(movies);
+app.get('/movies', async (req, res) => {
+    await Movies.find()
+    .then((movies) => {
+        res.status(201).json(movies);
+    })
+    .catch((err) =>{
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
 });
-//GET
-app.get('/movies', (req, res) =>{
-    res.status(200).json(movies);
-});
-
-
 //READ
 /**
  * Retrieves data for a specific movie by title.
@@ -69,17 +70,17 @@ app.get('/movies', (req, res) =>{
  * @returns {Object} JSON object containing data for the movie with the specified title.
  */
 
-app.get('/movies/:title', (req, res) =>{
-    const {title} = req.params;
-    const movie = movies.find( movie => movie.Title === title);
-
-    if (movie) {
-        res.status(200).json(movie);
-    }else{
-        res.status(400).send('no such movie')
-    }
-    
+app.get('/movies/:Title', async (req, res) => {
+    await Movies.findOne({Title: req.params.Title})
+    .then((movie) => {
+        res.json(movie);
+    })
+    .catch((err) => {
+        console.error(err);
+        res.status(500).send('Error: ' + err);
+    });
 });
+
 //READ
 /**
  * Retrieves data for movies based on a specific genre.
@@ -91,28 +92,29 @@ app.get('/movies/:title', (req, res) =>{
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object containing data for movies belonging to the specified genre.
  */
-app.get('/movies/genre/:genreName', (req, res) =>{
-    const {genreName} = req.params;
-    const genre = movies.find( movie => movie.Genre.Name === genreName).Genre;
-
-    if (genre) {
-        res.status(200).json(genre);
-    }else{
-        res.status(400).send('no such genre')
-    }
-});
+app.get("/movies/genres/:genreName", async (req, res) => {
+    await Movies.findOne({ "Genre.Name": req.params.genreName })
+      .then((movies) => {
+        res.json(movies);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
+  });
 //READ
+/**Retrieves data by director name*/
+app.get("/movies/directors/:directorName", async (req, res) => {
+    await Movies.findOne({ "Director.Name": req.params.directorName })
+      .then((movies) => {
+        res.json(movies);
+      })
+      .catch((err) => {
+        console.error(err);
+        res.status(500).send("Error: " + err);
+      });
+  });
 
-app.get('/movies/director/:directorName', (req, res) =>{
-    const {directorName} = req.params;
-    const director = movies.find( movie => movie.Director.Name === directorName).Director;
-
-    if (director) {
-        res.status(200).json(director);
-    }else{
-        res.status(400).send('no such director')
-    }
-});
 //READ
 /**
  * Retrieves data for all users.
@@ -122,9 +124,6 @@ app.get('/movies/director/:directorName', (req, res) =>{
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object containing data for all users.
  */
-app.get('/users', (req, res) =>{
-    res.status(200).json(users);
-});
 
 // Get all users
 app.get('/users', async (req, res) => {
@@ -147,17 +146,6 @@ app.get('/users', async (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object containing data for the user with the specified username.
  */
-app.get('/users/:name', (req, res) =>{
-    const {name} = req.params;
-    const user = users.find( user => user.name === name);
-
-    if (user) {
-        res.status(200).json(user);
-    }else{
-        res.status(400).send('no such movie')
-    }
-    
-});
 
 // Get a user by username
 app.get('/users/:Username', async (req, res) => {
@@ -182,17 +170,6 @@ app.get('/users/:Username', async (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object confirming the creation of the new user.
  */
-app.post('/users', (req, res) => {
-    const newUser = req.body;
-    
-    if(newUser.name) {
-        newUser.id = uuid.v4();
-        users.push(newUser);
-        res.status(201).json(newUser)
-    }else{
-        res.status(400).send('users need names')
-    }
-});
 
 app.post('/users', async (req, res) => {
     await Users.findOne({ Username: req.body.Username })
@@ -233,20 +210,6 @@ app.post('/users', async (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object confirming the successful update of user information.
  */
-app.put('/users/:name', (req, res) => {
-    const {name} = req.params;
-    const updatedUser = req.body;
-
-    let user = users.find(user => user.name === name);
-
-    if(user) {
-        user.name = updatedUser.name;
-        res.status(200).json(user);
-
-    }else{
-        res.status(400).send('no such user')
-    }
-});
 
 // Update a user's info, by username
 app.put('/users/:Username', async (req, res) => {
@@ -281,20 +244,6 @@ app.put('/users/:Username', async (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object confirming the successful addition of the movie to the user's list.
  */
-app.post('/users/:name/:movieTitle', (req, res) => {
-    const {name, movieTitle} = req.params;
-    
-
-    let user = users.find(user => user.name === name);
-
-    if(user) {
-        user.favoriteMovies.push(movieTitle);
-        res.status(200).send(`${movieName} has been added to user ${name}'s array`);;
-
-    }else{
-        res.status(400).send('no such user')
-    }
-});
 
 // Add a movie to a user's list of favorites
 app.post('/users/:Username/movies/:MovieID', async (req, res) => {
@@ -323,20 +272,23 @@ app.post('/users/:Username/movies/:MovieID', async (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object confirming the successful removal of the movie from the user's list.
  */
-app.delete('/users/:name/:movieTitle', (req, res) => {
-    const {name, movieTitle} = req.params;
-    
 
-    let user = users.find(user => user.name === name);
-
-    if(user) {
-        user.favoriteMovies = user.favoriteMovies.filter(title => title !== movieTitle);
-        res.status(200).send(`${movieTitle} has been removed from user ${name}'s array`);;
-
-    }else{
-        res.status(400).send('no such user')
-    }
-});
+app.delete("/users/:Username/movies/:MoviesID", (req, res) => {
+    Users.findOneAndUpdate(
+        { Username: req.params.Username },
+        {
+            $pull: { FavoriteMovies: req.params.MoviesID }
+        },
+        { new: true }, //This line makes sure the updated doc is returned
+        (err, updatedUser) => {
+            if (err) {
+                console.error(err);
+                res.status(500).send("Error: " + err);
+            } else {
+                res.json(updatedUser);
+            }
+    });
+    });
 
 //DELETE
 /**
@@ -349,21 +301,6 @@ app.delete('/users/:name/:movieTitle', (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object confirming the successful deletion of the user.
  */
-
-app.delete('/users/:name', (req, res) => {
-    const {name} = req.params;
-    
-
-    let user = users.find(user => user.name === name);
-
-    if(user) {
-        users = users.filter(user => user.name != name);
-        res.status(200).send(`user ${name} has been deleted`);;
-
-    }else{
-        res.status(400).send('no such user')
-    }
-});
 
 // Delete a user by username
 app.delete('/users/:Username', async (req, res) => {
