@@ -223,3 +223,5 @@
 ::1 - - [17/Apr/2024:02:53:19 +0000] "GET /movie/title/focus HTTP/1.1" 404 156 "-" "PostmanRuntime/7.37.3"
 ::1 - - [17/Apr/2024:02:55:38 +0000] "GET /movie/genre/drama HTTP/1.1" 404 156 "-" "PostmanRuntime/7.37.3"
 ::1 - - [17/Apr/2024:02:57:10 +0000] "GET /movies/id/Focus HTTP/1.1" 404 154 "-" "PostmanRuntime/7.37.3"
+::1 - - [17/Apr/2024:03:03:34 +0000] "GET /movies/genre/drama HTTP/1.1" 404 157 "-" "PostmanRuntime/7.37.3"
+::1 - - [17/Apr/2024:03:04:06 +0000] "GET /movies/genre/drama HTTP/1.1" 404 157 "-" "PostmanRuntime/7.37.3"
