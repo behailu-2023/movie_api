@@ -5,7 +5,11 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator');
 
-mongoose.connect('mongodb://localhost:27017/mymoviesDB', {useNewUrlParser: true, useUnifiedTopology: true});
+//mongoose.connect('mongodb://localhost:27017/mymoviesDB', {useNewUrlParser: true, useUnifiedTopology: true});
+
+//mongoose.connect('mongodb+srv://behailutesfaye15:BwPVBdGLvAWjeGbw@myflixdb.qers2p4.mongodb.net/myFlixDB?retryWrites=true&w=majority&appName=myFlixDB', {useNewUrlParser: true, useUnifiedTopology: true});
+
+mongoose.connect(process.env.CONNECTION_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
 const express = require('express');
 const morgan = require('morgan'),
@@ -375,3 +379,5 @@ const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () =>{
     console.log('Listening on Port ' + port);
 });
+
+
