@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const cors = require('cors');
+
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -27,7 +29,7 @@ const accessLogStream = fs.createWriteStream(path.join(__dirname, 'log.txt'), {f
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
-constcors = require('cors');
+
 app.use(cors());
 
 let allowedOrigins = ['http://localhost:8080', 'http://testsite.com'];
