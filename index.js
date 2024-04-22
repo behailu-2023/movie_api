@@ -259,23 +259,22 @@ app.post('/users', [
 
 // Update a user's info, by username
 app.put('/users/:Username',passport.authenticate('jwt', { session: false }),
-[
-  check('Username', 'Username is required').isLength({min: 5}),
-  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
-  check('Password', 'Password is required').not().isEmpty(),
-  check('Email', 'Email does not appear to be valid').isEmail(),
-  check('Birthdate', 'Birthdate require valid date format').isISO8601()
-],
+
+  //[check('Username', 'Username is required').isLength({min: 5}),
+  //check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  //check('Password', 'Password is required').not().isEmpty(),
+  //check('Email', 'Email does not appear to be valid').isEmail(),
+  //check('Birthdate', 'Birthdate require valid date format').isISO8601()],
 async (req, res) => {
   //Check for validation errors
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({errors: errors.array() });
-  }
+  //const errors = validationResult(req);
+  //if (!errors.isEmpty()) {
+    //return res.status(400).json({errors: errors.array() });}
     if(req.user.Username !== req.params.Username){
         return res.status(422).send('Permission denied');
     }
-    await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+    await Users.findOneAndUpdate({ Username: req.params.Username }, 
+      { $set:
       {
         Username: req.body.Username,
         Password: req.body.Password,
