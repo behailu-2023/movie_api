@@ -50,6 +50,7 @@ passport.use(new JWTStrategy({
       return callback(null, user);
     })
     .catch((error) => {
+      console.error(error);
       return callback(error)
     });
 }));
