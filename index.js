@@ -226,7 +226,7 @@ app.post('/users', [
           Users
             .create({
               Username: req.body.Username,
-              Password: req.body.Password,
+              Password: hashedPassword,
               Email: req.body.Email,
               Birthday: req.body.Birthday
             })
@@ -273,6 +273,7 @@ async (req, res) => {
     if(req.user.Username !== req.params.Username){
         return res.status(422).send('Permission denied');
     }
+    let hashedPassword = Users.hashPassword(req.body.Password);
     await Users.findOneAndUpdate({ Username: req.params.Username }, 
       { $set:
       {
