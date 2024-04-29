@@ -335,22 +335,20 @@ app.post('/users/:Username/movies/:MovieID',passport.authenticate('jwt', { sessi
  * @returns {Object} JSON object confirming the successful removal of the movie from the user's list.
  */
 
-app.delete("/users/:Username/movies/:MoviesID",passport.authenticate('jwt', { session: false }), (req, res) => {
-    Users.findOneAndUpdate(
-        { Username: req.params.Username },
-        {
+app.delete("/users/:Username/movies/:MoviesID",passport.authenticate('jwt', { session: false }), async (req, res) => {
+    await Users.findOneAndUpdate({ Username: req.params.Username }, {
             $pull: { FavoriteMovies: req.params.MoviesID }
         },
-        { new: true }, //This line makes sure the updated doc is returned
-        (err, updatedUser) => {
-            if (err) {
-                console.error(err);
-                res.status(500).send("Error: " + err);
-            } else {
-                res.json(updatedUser);
-            }
-    });
-    });
+        { new: true }) //This line makes sure the updated doc is returned
+        .then((updatedUser) => {
+          res.json(updatedUser);
+        })
+          .catch((err) => {
+            console.error(err);
+            res.status(500).send("Error: " + err);
+          });
+        })
+  
 
 //DELETE
 /**
