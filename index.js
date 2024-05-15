@@ -28,7 +28,7 @@ app.use(bodyParser.json());
 
 app.use(cors());
 
-let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://localhost:49355','http://localhost:52934' ];
+let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://localhost:63179','http://localhost:52934' ];
 
 app.use(cors({
   origin: (origin, callback) => {
