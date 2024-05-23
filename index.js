@@ -75,7 +75,7 @@ app.get('/documentation', (req, res) => {
  * @param {Object} res - Express response object.
  * @returns {Object} JSON object containing data on all the movies.
 */
-app.get('/movies',//passport.authenticate('jwt', { session: false }), 
+app.get('/movies',passport.authenticate('jwt', { session: false }), 
 async (req, res) => {
     await Movies.find()
     .then((movies) => {
