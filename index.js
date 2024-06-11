@@ -49,6 +49,42 @@ require('./passport');
 app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
 
+// TMDB API Key
+const API_KEY = 'YOUR_TMDB_API_KEY';
+const BASE_URL = 'https://api.themoviedb.org/3';
+
+const fetchMoviePoster = async (title) => {
+  const response = await fetch(`${BASE_URL}/search/movie?api_key=${API_KEY}&query=${encodeURIComponent(title)}`);
+  const data = await response.json();
+  if (data.results && data.results.length > 0) {
+    return `https://image.tmdb.org/t/p/w500${data.results[0].poster_path}`;
+  }
+  return null;
+};
+
+// Add new route to update movie posters
+app.put('/update-posters', async (req, res) => {
+  try {
+    const movies = await Movies.find();
+    for (const movie of movies) {
+      const posterUrl = await fetchMoviePoster(movie.Title);
+      if (posterUrl) {
+        movie.ImageURL = posterUrl;
+        await movie.save();
+        console.log(`Updated poster for ${movie.Title}`);
+      } else {
+        console.log(`No poster found for ${movie.Title}`);
+      }
+    }
+    res.status(200).send('Posters updated successfully.');
+  } catch (error) {
+    console.error('Error updating posters:', error);
+    res.status(500).send('Error updating posters');
+  }
+});
+
+
+
 //READ
 /**
  * Sends a welcome message to the client.
