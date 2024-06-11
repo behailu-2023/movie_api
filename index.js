@@ -50,7 +50,7 @@ app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
 
 // TMDB API Key
-const API_KEY = 'YOUR_TMDB_API_KEY';
+const API_KEY = '6c0b6772ebea0ad89f5ac29c4c8be3df';
 const BASE_URL = 'https://api.themoviedb.org/3';
 
 const fetchMoviePoster = async (title) => {
