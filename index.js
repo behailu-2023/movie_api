@@ -21,7 +21,7 @@ import './passport.js';
 
 const Movies = Models.Movie;
 const Users = Models.User;
-const { check, validationResult } = require('express-validator');
+//const { check, validationResult } = require('express-validator');
 
 mongoose.connect(process.env.CONNECTION_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
