@@ -15,6 +15,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import { Movie, User } from './models.js';
 import auth from './auth.js';
+import Models from './models.js';
 import passport from 'passport';
 import { check, validationResult } from 'express-validator';
 import './passport.js';
