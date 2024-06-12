@@ -1,7 +1,7 @@
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import passportJWT from 'passport-jwt';
-import { User as Users } from './models.js';
+import { User } from './models.js';
 //const passport = require('passport'),
   //LocalStrategy = require('passport-local').Strategy,
   //Models = require('./models.js'),
