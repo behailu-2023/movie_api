@@ -5,8 +5,8 @@ import { Router } from 'express';
 
 const jwtSecret = 'your_jwt_secret'; // This has to be the same key used in the JWTStrategy
 
-//const jwt = require('jsonwebtoken'),
-  //passport = require('passport');
+
+  
 
 import ('./passport'); // Your local passport file
 
