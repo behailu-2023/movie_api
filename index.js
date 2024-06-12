@@ -1,7 +1,23 @@
-const mongoose = require('mongoose');
-const Models = require('./models.js');
-const cors = require('cors');
-const fetch = require('node-fetch');
+//const mongoose = require('mongoose');
+//const Models = require('./models.js');
+//const cors = require('cors');
+//const fetch = require('node-fetch');
+
+import mongoose from 'mongoose';
+import express from 'express';
+import cors from 'cors';
+import morgan from 'morgan';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+import path from 'path';
+import fetch from 'node-fetch';
+import { fileURLToPath } from 'url';
+import { dirname } from 'path';
+import Models from './models.js';
+import auth from './auth.js';
+import passport from 'passport';
+import { check, validationResult } from 'express-validator';
+import './passport.js';
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -28,18 +44,6 @@ app.use(bodyParser.json());
 
 app.use(cors({origin: '*'}));
 
-//let allowedOrigins = ['http://localhost:8080', 'http://testsite.com', 'http://localhost:1234', 'http://localhost:63179','http://localhost:52934' ];
-
-//app.use(cors({
-  //origin: (origin, callback) => {
-   // if(!origin) return callback(null, true);
-   // if(allowedOrigins.indexOf(origin) === -1){ // If a specific origin isn’t found on the list of allowed origins
-     // let message = 'The CORS policy for this application doesn’t allow access from origin ' + origin;
-     // return callback(new Error(message ), false);
-   // }
-   // return callback(null, true);
- // }
-//}));
 
 let auth = require('./auth')(app);
 
