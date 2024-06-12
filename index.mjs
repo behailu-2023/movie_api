@@ -423,7 +423,7 @@ app.delete('/users/:Username',passport.authenticate('jwt', { session: false }), 
     res.status(500).send('Something broke!');
   });
 //listen for request
-const port = process.env.PORT || 8080;
+const port = process.env.PORT || 4000;
 app.listen(port, '0.0.0.0', () =>{
     console.log('Listening on Port ' + port);
 });
