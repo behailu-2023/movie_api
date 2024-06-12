@@ -1,40 +1,22 @@
-//const mongoose = require('mongoose');
-//const Models = require('./models.js');
-//const cors = require('cors');
-//const fetch = require('node-fetch');
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+const cors = require('cors');
+const fetch = require('node-fetch');
 
-import mongoose from 'mongoose';
-import express from 'express';
-import cors from 'cors';
-import morgan from 'morgan';
-import bodyParser from 'body-parser';
-import fs from 'fs';
-import path from 'path';
-import fetch from 'node-fetch';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
-import { Movie, User } from './models.js';
-import auth from './auth.js';
-import Models from './models.js';
-import passport from 'passport';
-import { check, validationResult } from 'express-validator';
-import './passport.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 const Movies = Models.Movie;
 const Users = Models.User;
-//const { check, validationResult } = require('express-validator');
+const { check, validationResult } = require('express-validator');
 
 mongoose.connect(process.env.CONNECTION_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
-//const express = require('express');
-//const morgan = require('morgan'),
-    //bodyParser = require('body-parser'),
-    //uuid = require('uuid'),
-    //fs = require('fs'),
-    //path = require('path');
+const express = require('express');
+const morgan = require('morgan'),
+    bodyParser = require('body-parser'),
+    uuid = require('uuid'),
+    fs = require('fs'),
+    path = require('path');
 const app = express();
 
 app.use(express.json());
@@ -49,10 +31,10 @@ app.use(bodyParser.json());
 app.use(cors({origin: '*'}));
 
 
-//let auth = require('./auth')(app);
+let auth = require('./auth')(app);
 
-//const passport = require('passport');
-//require('./passport');
+const passport = require('passport');
+require('./passport');
 
 app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
@@ -424,7 +406,7 @@ app.delete('/users/:Username',passport.authenticate('jwt', { session: false }), 
     res.status(500).send('Something broke!');
   });
 //listen for request
-const port = process.env.PORT || 4000;
+const port = process.env.PORT || 8080;
 app.listen(port, '0.0.0.0', () =>{
     console.log('Listening on Port ' + port);
 });
