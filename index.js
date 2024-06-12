@@ -25,12 +25,12 @@ const Users = Models.User;
 
 mongoose.connect(process.env.CONNECTION_URI, {useNewUrlParser: true, useUnifiedTopology: true});
 
-const express = require('express');
-const morgan = require('morgan'),
-    bodyParser = require('body-parser'),
-    uuid = require('uuid'),
-    fs = require('fs'),
-    path = require('path');
+//const express = require('express');
+//const morgan = require('morgan'),
+    //bodyParser = require('body-parser'),
+    //uuid = require('uuid'),
+    //fs = require('fs'),
+    //path = require('path');
 const app = express();
 
 app.use(express.json());
@@ -45,10 +45,10 @@ app.use(bodyParser.json());
 app.use(cors({origin: '*'}));
 
 
-let auth = require('./auth')(app);
+//let auth = require('./auth')(app);
 
-const passport = require('passport');
-require('./passport');
+//const passport = require('passport');
+//require('./passport');
 
 app.use(morgan('combined', {stream: accessLogStream}));
 app.use(express.static('public'));
