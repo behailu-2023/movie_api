@@ -13,11 +13,14 @@ import path from 'path';
 import fetch from 'node-fetch';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
-import Models from './models.js';
+import { Movie, User } from './models.js';
 import auth from './auth.js';
 import passport from 'passport';
 import { check, validationResult } from 'express-validator';
 import './passport.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -414,6 +417,10 @@ app.delete('/users/:Username',passport.authenticate('jwt', { session: false }), 
         console.error(err);
         res.status(500).send('Error: ' + err);
       });
+  });
+  app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
   });
 //listen for request
 const port = process.env.PORT || 8080;
