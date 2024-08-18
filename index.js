@@ -83,14 +83,17 @@ async (req, res) => {
  * @returns {Object} JSON object containing data for the movie with the specified title.
  */
 
-app.get('/movies/:Title',passport.authenticate('jwt', { session: false }), async (req, res) => {
-    await Movies.findOne({Title: req.params.Title})
+app.get('/movies/:Title', passport.authenticate('jwt', { session: false }), async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
-        res.json(movie);
+      if (!movie) {
+        return res.status(404).send('Movie not found');
+      }
+      res.json(movie);
     })
     .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
+      console.error(err);
+      res.status(500).send('Error: ' + err);
     });
 });
 
