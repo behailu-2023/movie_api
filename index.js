@@ -6,7 +6,7 @@ const Movies = Models.Movie;
 const Users = Models.User;
 const { check, validationResult } = require('express-validator');
 
-mongoose.connect(process.env.CONNECTION_URI, {useUnifiedTopology: true});
+mongoose.connect(process.env.CONNECTION_URI, {});
 
 const express = require('express');
 const morgan = require('morgan'),
